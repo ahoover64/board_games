@@ -1,19 +1,20 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include <memory.h>
+#include <memory>
 #include <stdio.h>
 
 class Player {
 public:
     Player();
-    Player(FILE* input);
-    Player& operator=(const Player&);
+    Player(FILE* input, FILE* output);
     ~Player();
+    FILE* get_out_stream();
     char* get_move();
 private:
     class Impl;
-    std::shared_ptr<Impl> mImpl;
+    Impl* mImpl;
+//    std::shared_ptr<Impl> mImpl;
 };
 
 #endif // __PLAYER_H__

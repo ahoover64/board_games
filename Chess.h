@@ -1,18 +1,18 @@
 #ifndef __CHESS_H__
 #define __CHESS_H__
 
-#include <memory.h>
+#include <memory>
 
 #include "Game.h"
 
-class Chess : Game {
+class Chess : public Game {
 public:
     Chess();
     Chess(const Chess&);
     Chess& operator=(const Chess&);
     ~Chess();
-    int add_player(const Player&);
-    void play_game();
+    int add_player(Player&);
+    int play_game();
 
 private:
     class Impl;
