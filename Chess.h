@@ -13,6 +13,8 @@ public:
     ~Chess();
     int add_player(Player&);
     int play_game();
+    void print_instructions(FILE* stream);
+    void print_game(FILE* stream);
 
 private:
     class Impl;

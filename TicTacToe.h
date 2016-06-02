@@ -5,7 +5,7 @@
 
 #include "Game.h"
 
-class TicTacToe : public Game {
+class TicTacToe : private Game {
 public:
     TicTacToe();
     TicTacToe(const TicTacToe&);
@@ -15,6 +15,7 @@ public:
     // Returns -1 if there was an error. Returns 0 if a draw
     // Otherwise returns the number player that won.
     int play_game();
+    void print_instructions(FILE* stream);
     void print_game(FILE* stream);
 
 private:

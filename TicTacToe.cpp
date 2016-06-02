@@ -49,6 +49,9 @@ TicTacToe::~TicTacToe() {
 }
 
 int TicTacToe::add_player(Player& p) {
+    if (is_locked()) {
+        fprintf(stderr, "Game is locked.");
+    }
     if (mImpl->players == 0) {
         mImpl->p[0] = p;
         mImpl->players = 1;
@@ -64,9 +67,18 @@ int TicTacToe::add_player(Player& p) {
     return 1;
 }
 
+void TicTacToe::print_instructions(FILE *stream) {
+    if(!stream) {
+        fprintf(stderr, "Stream can't be null.\n");
+        return;
+    }
+    fprintf(stream, "Enter the number of the slot you wish to place your marker.\n");
+}
+
 void TicTacToe::print_game(FILE* stream) {
     if (!stream) {
-        fprintf(stderr, "Stream can't be null.");
+        fprintf(stderr, "Stream can't be null.\n");
+        return;
     }
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -96,6 +108,7 @@ int TicTacToe::play_game() {
     int m = 0;
     int player = 0;
     int winner = 0;
+    lock_game();
     while (!(winner = mImpl->game_done())) {
         player = mImpl->move % 2;
         print_game(mImpl->p[player].get_out_stream());
@@ -111,5 +124,6 @@ int TicTacToe::play_game() {
     }
     if (winner == 2)
         return 0;
+    unlock_game();
     return winner;
 }

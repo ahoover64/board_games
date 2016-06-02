@@ -1,7 +1,26 @@
 #include "Game.h"
 
-Game::Game() {}
+class Game::Impl {
+public:
+    bool locked;
+};
 
-Game::Game(const Game& g) {}
+Game::Game() : gameImpl(new Impl) { 
+    gameImpl->locked = false;
+}
 
-Game::~Game() {}
+Game::Game(const Game& g) : gameImpl(g.gameImpl) {}
+
+Game::~Game() { delete gameImpl; }
+
+bool Game::is_locked() {
+    return gameImpl->locked;
+}
+
+void Game::lock_game() {
+    gameImpl->locked = true;
+}
+
+void Game::unlock_game() {
+    gameImpl->locked = false;
+}
