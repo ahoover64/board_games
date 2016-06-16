@@ -2,6 +2,7 @@
 #define __AMAZONS_H__
 
 #include <iostream>
+#include <stdlib.h>
 
 class Amazons : public Game {
 public:

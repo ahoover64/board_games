@@ -14,6 +14,7 @@ public:
             board[m-1] = (player == 0) ? 1 : -1;
         return 1;
     }
+
     int game_done() {
        for (int i = 0; i < 3; i++) {
             if (board[3*i] != 0 && board[3*i + 0] == board[3*i + 1] && board[3*i] == board[3*i + 2])
