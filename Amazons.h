@@ -3,10 +3,12 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include "Game.h"
+#include "Player.h"
 
 class Amazons : public Game {
 public:
-    Amazons(); // Board size is set to 10 x 10
+    Amazons(); // Board size is set to 5 x 5
     Amazons(int n); //Construct with specified board size
     ~Amazons();
     int add_player(Player&);

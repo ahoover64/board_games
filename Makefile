@@ -1,5 +1,5 @@
 #
-# Created by makemake (Darwin May 30 2016) on Wed Jun  1 14:46:08 2016
+# Created by makemake (Darwin May 30 2016) on Fri Jun 17 15:48:51 2016
 #
 
 #
@@ -46,21 +46,21 @@ COMPILE.c = $(CC) $(CFLAGS) $(CPPFLAGS) -c
 COMPILE.cc = $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
 
 ########## Default flags (redefine these with a header.mak file if desired)
-CXXFLAGS =	-ggdb -Wall -pedantic -std=c++11
-CFLAGS =	-ggdb -Wall -pedantic -std=c++11
+CXXFLAGS =	-ggdb -Wall -pedantic
+CFLAGS =	-ggdb -Wall -pedantic
 BINDIR =./bin
 CLIBFLAGS =	-lm
 CCLIBFLAGS =	
 ########## End of default flags
 
 
-CPP_FILES =	Chess.cpp Game.cpp Player.cpp TicTacToe.cpp test.cpp
+CPP_FILES =	Amazons.cpp Chess.cpp Game.cpp Player.cpp TicTacToe.cpp test.cpp
 C_FILES =	
 S_FILES =	
-H_FILES =	Chess.h Game.h Player.h TicTacToe.h
+H_FILES =	Amazons.h Chess.h Game.h Player.h TicTacToe.h
 SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES)
 .PRECIOUS:	$(SOURCEFILES)
-OBJFILES =	Chess.o Game.o Player.o TicTacToe.o 
+OBJFILES =	Amazons.o Chess.o Game.o Player.o TicTacToe.o 
 
 #
 # Main targets
@@ -76,11 +76,12 @@ ${BINDIR}/test:	test.o $(OBJFILES)
 # Dependencies
 #
 
+Amazons.o:	Amazons.h
 Chess.o:	
-Game.o:	
+Game.o:	Game.h Player.h
 Player.o:	Player.h
 TicTacToe.o:	Game.h Player.h TicTacToe.h
-test.o:	Game.h Player.h TicTacToe.h
+test.o:	Amazons.h Game.h Player.h TicTacToe.h
 
 #
 # Housekeeping
