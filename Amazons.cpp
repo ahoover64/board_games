@@ -18,8 +18,8 @@ public:
         int loc_c = -1;
         for (int i = 0; i < board_size * board_size; i++) {
             if (board[i] == player+1) {
-                loc_r = i / 10;
-                loc_c = i % 10;
+                loc_r = i / board_size;
+                loc_c = i % board_size;
                 break;
             }
         }
@@ -37,15 +37,17 @@ public:
     }
 
     bool make_move(int player, int r_to, int c_to, int r_arrow, int c_arrow) {
+        printf("(%i, %i), (%i, %i)\n", r_to, c_to, r_arrow, c_arrow);
         int loc_r = -1;
         int loc_c = -1;
         for (int i = 0; i < board_size * board_size; i++) {
             if (board[i] == player+1) {
-                loc_r = i / 10;
-                loc_c = i % 10;
+                loc_r = i / board_size;
+                loc_c = i % board_size;
                 break;
             }
         }
+        printf("LOC: (%i, %i)\n", loc_r, loc_c);
 
         // Check that the number are within the bounds
         // Also check that the player is actually moving / the arrow is shot
@@ -53,45 +55,54 @@ public:
                 r_arrow < 0 || r_arrow > board_size ||
                 c_arrow < 0 || c_arrow > board_size ||
                 (r_to == loc_r && c_to == loc_c) ||
-                (r_arrow == r_to && c_arrow == c_to))
+                (r_arrow == r_to && c_arrow == c_to)) {
+            printf("ERROR 1\n");
             return false;
+        }
 
         // Check that the move is along one of the proper paths
         // Check that the arrow shot is also a proper path
         if ((abs(r_to - loc_r) != abs(c_to - loc_c) && r_to != loc_r && c_to != loc_c)
-            || (abs(r_arrow - r_to) != abs(c_arrow - c_to) && r_arrow != r_to &&
-            c_to != loc_c))
+                || (abs(r_arrow - r_to) != abs(c_arrow - c_to) && r_arrow != r_to &&
+                c_arrow != c_to)) {
+            printf("ERROR 2\n");
             return false;
+        }
 
         // Check that the movement path is clear
-        for (int r = MIN(loc_r, r_to); r <= MAX(loc_r, r_to); r++) {
-            for (int c = MIN(loc_c, c_to); c <= MAX(loc_c, c_to); c++) {
-                if (board[board_size * r + c] != 0 && r != loc_r && c != loc_c) {
-                    return false;
-                }
-                if (r == MAX(loc_r, r_to))
-                    r--;
-                if (c == MAX(loc_c, c_to))
-                    c--;
+        int r = MIN(loc_r, r_to);
+        int c = MIN(loc_c, c_to);
+        while(r <= MAX(loc_r, r_to) || c <= MAX(loc_c, c_to)) {
+            if (board[board_size * r + c] != 0 && r != loc_r && c != loc_c) {
+                printf("ERROR 3: (%i, %i)\n", r, c);
+                return false;
             }
+            r++; c++;
+            if (loc_r == r_to)
+                r--;
+            if (loc_c == c_to)
+                c--;
         }
+
 
         // Check that the the player has a clear shot
-        for (int r = MIN(r_arrow, r_to); r < MAX(r_arrow, r_to);) {
-            for (int c = MIN(c_arrow, c_to); c < MAX(c_arrow, c_to);) {
-                if (board[board_size * r + c] != 0 && r != r_to && c != c_to) {
-                    return false;
-                }
-                if (r == MAX(r_to, r_arrow))
-                    r--;
-                if (c == MAX(c_to, c_arrow))
-                    c--;
+        r = MIN(r_arrow, r_to);
+        c = MIN(c_arrow, c_to);
+        while(r <= MAX(r_arrow, r_to) || c <= MAX(c_arrow, c_to)) {
+            if (board[board_size * r + c] != 0 && r != r_to && c != c_to) {
+                printf("ERROR 4: (%i, %i)\n", r, c);
+                return false;
             }
+            r++; c++;
+            if (r_arrow == r_to)
+                r--;
+            if (c_arrow == c_to)
+                c--;
         }
 
-        board[board_size * loc_r + loc_c] = 0;
-        board[board_size * r_to + c_to] = player + 1;
-        board[board_size * r_arrow + c_arrow] = -1;
+        board[board_size * loc_r + loc_c] = 0;        // A free space
+        board[board_size * r_to + c_to] = player + 1; // New player position
+        board[board_size * r_arrow + c_arrow] = -1;   // New blocked position
 
         return true;
     }
@@ -227,10 +238,6 @@ int Amazons::play_game() {
             print_game(mImpl->p[player].get_out_stream());
             char* s = mImpl->p[player].get_move();
             char* tok = strtok(s, " (),");
-            printf("MOVE: " );
-            printf("%s\n", s);
-            printf("FIRST TOKEN: " );
-            printf("%s\n", tok);
             if(tok == NULL || !sscanf(tok, "%i", &r_to)) {
                 fprintf(stderr, "Invalid input format.\n");
                 print_instructions(mImpl->p[player].get_out_stream());

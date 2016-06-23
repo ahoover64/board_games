@@ -28,7 +28,6 @@ FILE* Player::get_out_stream() {
 char* Player::get_move() {
     char* move = (char*) malloc(40);
     if (fgets(move, 40, mImpl->input) != NULL) {
-        printf("%s", move);
         return move;
     }
     return NULL;
