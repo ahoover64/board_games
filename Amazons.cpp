@@ -37,7 +37,6 @@ public:
     }
 
     bool make_move(int player, int r_to, int c_to, int r_arrow, int c_arrow) {
-        printf("(%i, %i), (%i, %i)\n", r_to, c_to, r_arrow, c_arrow);
         int loc_r = -1;
         int loc_c = -1;
         for (int i = 0; i < board_size * board_size; i++) {
@@ -47,7 +46,6 @@ public:
                 break;
             }
         }
-        printf("LOC: (%i, %i)\n", loc_r, loc_c);
 
         // Check that the number are within the bounds
         // Also check that the player is actually moving / the arrow is shot
@@ -72,7 +70,9 @@ public:
         // Check that the movement path is clear
         int r = MIN(loc_r, r_to);
         int c = MIN(loc_c, c_to);
-        while(r <= MAX(loc_r, r_to) || c <= MAX(loc_c, c_to)) {
+        int max_r = MAX(loc_r, r_to);
+        int max_c = MAX(loc_c, c_to);
+        while((r <= max_r) && (c <= max_c)) {
             if (board[board_size * r + c] != 0 && r != loc_r && c != loc_c) {
                 printf("ERROR 3: (%i, %i)\n", r, c);
                 return false;
@@ -88,7 +88,9 @@ public:
         // Check that the the player has a clear shot
         r = MIN(r_arrow, r_to);
         c = MIN(c_arrow, c_to);
-        while(r <= MAX(r_arrow, r_to) || c <= MAX(c_arrow, c_to)) {
+        max_r = MAX(r_arrow, r_to);
+        max_c = MAX(c_arrow, c_to);
+        while((r <= max_r) && (c <= max_c)) {
             if (board[board_size * r + c] != 0 && r != r_to && c != c_to) {
                 printf("ERROR 4: (%i, %i)\n", r, c);
                 return false;
