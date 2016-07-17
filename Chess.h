@@ -15,7 +15,7 @@ public:
     int play_game();
     void print_instructions(FILE* stream);
     void print_game(FILE* stream);
-
+    int* get_board();
 private:
     class Impl;
     std::shared_ptr<Impl> mImpl;

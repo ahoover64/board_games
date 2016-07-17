@@ -159,7 +159,7 @@ int Amazons::add_player(Player& p) {
     }
     mImpl->p[mImpl->p_count] = p;
     mImpl->p_count++;
-    return 1;
+    return p_count;
 }
 
 void Amazons::print_instructions(FILE* stream) {
@@ -277,4 +277,11 @@ int Amazons::play_game() {
     winner++;
     unlock_game();
     return winner;
+}
+
+// Deep copy of the board at a specific time
+int* Amazons::get_board() {
+    int* board_cp = (int*) malloc(sizeof(int) * mImpl->board_size * mImpl->board_size);
+    memcpy(board_cp, mImpl->board, sizeof(int) * mImpl->board_size * mImpl->board_size);
+    return board_cp;
 }

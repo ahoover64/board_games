@@ -9,8 +9,8 @@ public:
     Player();
     Player(FILE* input, FILE* output);
     ~Player();
-    FILE* get_out_stream();
-    char* get_move();
+    virtual FILE* get_out_stream();
+    virtual char* get_move();
 private:
     class Impl;
     Impl* mImpl;

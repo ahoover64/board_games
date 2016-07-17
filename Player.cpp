@@ -12,14 +12,14 @@ Player::Player() : mImpl(new Impl()) {
     mImpl->output = stdout;
 }
 
-
-
 Player::Player(FILE* input, FILE* output) : mImpl(new Impl()) {
     mImpl->input = input;
     mImpl->output = output;
 }
 
-Player::~Player() { delete mImpl; }
+Player::~Player() { 
+    delete mImpl;
+}
 
 FILE* Player::get_out_stream() {
     return mImpl->output;
