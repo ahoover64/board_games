@@ -129,8 +129,8 @@ int TicTacToe::play_game() {
     return winner;
 }
 
-int* TicTacToe::get_board() {
-    int* board_cp = (int*) malloc(sizeof(int) * 9);
-    memcpy(board_cp, mImpl->board, sizeof(int) * 9);
-    return board_cp;
+const int* TicTacToe::get_board() {
+    //int* board_cp = (int*) malloc(sizeof(int) * 9);
+    //memcpy(board_cp, mImpl->board, sizeof(int) * 9);
+    return mImpl->board;
 }

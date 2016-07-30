@@ -5,7 +5,7 @@ class NeuralNet {
 public:
     NeuralNet();
     NeuralNet(const NeuralNet&);
-    NerualNet& operator=(const NerualNet&);
+    NeuralNet& operator=(const NeuralNet&);
     ~NeuralNet();
 private:
     class Impl;

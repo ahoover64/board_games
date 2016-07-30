@@ -12,8 +12,8 @@
 
 int main(int argc, char* argv[]) {
     Amazons g = Amazons();
-    Player p1(stdin, stdout);
-    Player p2(stdin, stdout);
+    AmazonsAI p1(1, 5, g.get_board());
+    AmazonsAI p2(2, 5, g.get_board());
     g.add_player(p1);
     g.add_player(p2);
     int w = g.play_game();

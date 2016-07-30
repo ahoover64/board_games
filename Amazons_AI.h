@@ -11,10 +11,10 @@
 #include "Player.h"
 #include "Game.h"
 
-class AmazonsAI : private Player {
+class AmazonsAI : public Player {
 public:
-    AmazonsAI(int p_num, int board_size);
-    AmazonsAI(int p_num, int size, double [] move_weights, double [] shoot_weights);
+    AmazonsAI(int p_num, int board_size, const int* game_board);
+    AmazonsAI(int p_num, int size, const int* game_board, double move_weights[], double shoot_weights[]);
     //AmazonsAI(const AmazonsAI&);
     //AmazonsAI& operator=(const AmazonsAI&);
     ~AmazonsAI();

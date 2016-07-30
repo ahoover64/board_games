@@ -5,18 +5,18 @@ public:
 
 };
 
-NerualNet::NeuralNet() {
+NeuralNet::NeuralNet() {
 
 }
 
-NerualNet::NerualNet(const NeuralNet& other) {
+NeuralNet::NeuralNet(const NeuralNet& other) {
 
 }
 
-NerualNet& NerualNet::operator=(const NerualNet& other) {
-  
+NeuralNet& NeuralNet::operator=(const NeuralNet& other) {
+
 }
 
-NerualNet::~NerualNet() {
+NeuralNet::~NeuralNet() {
 
 }

@@ -1,5 +1,5 @@
 #
-# Created by makemake (Darwin May 30 2016) on Fri Jun 17 15:48:51 2016
+# Created by makemake (Darwin May 30 2016) on Sat Jul 30 12:49:35 2016
 #
 
 #
@@ -54,34 +54,41 @@ CCLIBFLAGS =
 ########## End of default flags
 
 
-CPP_FILES =	Amazons.cpp Chess.cpp Game.cpp Player.cpp TicTacToe.cpp test.cpp
+CPP_FILES =	Amazons.cpp Amazons_AI.cpp Chess.cpp Game.cpp Neural_Net.cpp Player.cpp TicTacToe.cpp test.cpp trainer.cpp
 C_FILES =	
 S_FILES =	
-H_FILES =	Amazons.h Chess.h Game.h Player.h TicTacToe.h
+H_FILES =	Amazons.h Amazons_AI.h Chess.h Game.h Neural_Net.h Player.h TicTacToe.h
 SOURCEFILES =	$(H_FILES) $(CPP_FILES) $(C_FILES) $(S_FILES)
 .PRECIOUS:	$(SOURCEFILES)
-OBJFILES =	Amazons.o Chess.o Game.o Player.o TicTacToe.o 
+OBJFILES =	Amazons.o Amazons_AI.o Chess.o Game.o Neural_Net.o Player.o TicTacToe.o 
 
 #
 # Main targets
 #
 
-all:	${BINDIR}/test 
+all:	${BINDIR}/test ${BINDIR}/trainer 
 
 ${BINDIR}/test:	test.o $(OBJFILES)
 	@mkdir -p ${BINDIR}/
 	$(CXX) $(CXXFLAGS) -o ${BINDIR}/test test.o $(OBJFILES) $(CCLIBFLAGS)
 
+${BINDIR}/trainer:	trainer.o $(OBJFILES)
+	@mkdir -p ${BINDIR}/
+	$(CXX) $(CXXFLAGS) -o ${BINDIR}/trainer trainer.o $(OBJFILES) $(CCLIBFLAGS)
+
 #
 # Dependencies
 #
 
-Amazons.o:	Amazons.h
+Amazons.o:	Amazons.h Game.h Player.h
+Amazons_AI.o:	Amazons_AI.h Game.h Player.h
 Chess.o:	
 Game.o:	Game.h Player.h
+Neural_Net.o:	Neural_Net.h
 Player.o:	Player.h
 TicTacToe.o:	Game.h Player.h TicTacToe.h
 test.o:	Amazons.h Game.h Player.h TicTacToe.h
+trainer.o:	Amazons.h Amazons_AI.h Game.h Player.h
 
 #
 # Housekeeping
@@ -93,7 +100,7 @@ archive.tgz:	$(SOURCEFILES) Makefile
 	tar cf - $(SOURCEFILES) Makefile | gzip > archive.tgz
 
 clean:
-	-/bin/rm $(OBJFILES) test.o core 2> /dev/null
+	-/bin/rm $(OBJFILES) test.o trainer.o core 2> /dev/null
 
 realclean:        clean
-	-/bin/rm -rf ${BINDIR}/test 
+	-/bin/rm -rf ${BINDIR}/test ${BINDIR}/trainer 

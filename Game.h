@@ -11,7 +11,7 @@ public:
     virtual int play_game() = 0;
     virtual void print_game(FILE* stream) = 0;
     // Returns a copy of the board, so that the info cna't be changed
-    virtual int* get_board() = 0; 
+    virtual const int* get_board() = 0; 
     bool is_locked();
     Game();
     Game(const Game&);
@@ -26,4 +26,3 @@ private:
 };
 
 #endif // __GAME_H__
-

@@ -15,7 +15,7 @@ public:
     int play_game();
     void print_instructions(FILE* stream);
     void print_game(FILE* stream);
-    int* get_board();
+    const int* get_board();
 public:
     class Impl;
     Impl* mImpl;
