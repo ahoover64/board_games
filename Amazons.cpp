@@ -7,9 +7,8 @@
 
 class Amazons::Impl {
 public:
-    Player *p;
+    Player **p;
     int p_count;
-    int malloc_size;
     int *board;
     int board_size;
 
@@ -54,7 +53,7 @@ public:
                 c_arrow < 0 || c_arrow > board_size ||
                 (r_to == loc_r && c_to == loc_c) ||
                 (r_arrow == r_to && c_arrow == c_to)) {
-            printf("ERROR 1\n");
+            printf("ERROR 1: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
             return false;
         }
 
@@ -63,7 +62,7 @@ public:
         if ((abs(r_to - loc_r) != abs(c_to - loc_c) && r_to != loc_r && c_to != loc_c)
                 || (abs(r_arrow - r_to) != abs(c_arrow - c_to) && r_arrow != r_to &&
                 c_arrow != c_to)) {
-            printf("ERROR 2\n");
+            printf("ERROR 2: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
             return false;
         }
 
@@ -111,9 +110,8 @@ public:
 };
 
 Amazons::Amazons() : mImpl(new Impl) {
-    mImpl->p = (Player*) malloc(sizeof(Player) * 2);
+    mImpl->p = new Player*[5];
     mImpl->p_count = 0;
-    mImpl->malloc_size = 2;
     mImpl->board = (int*) malloc(sizeof(int) * (5 * 5));
     mImpl->board_size = 5;
     for (int r = 0; r < mImpl->board_size; r++) {
@@ -124,9 +122,8 @@ Amazons::Amazons() : mImpl(new Impl) {
 }
 
 Amazons::Amazons(int n) : mImpl(new Impl) {
-    mImpl->p = (Player*) malloc(sizeof(Player) * 2);
+    mImpl->p = new Player*[n];
     mImpl->p_count = 0;
-    mImpl->malloc_size = 2;
     mImpl->board = (int*) malloc(sizeof(int) * (n * n));
     mImpl->board_size = n;
     for (int r = 0; r < mImpl->board_size; r++) {
@@ -137,7 +134,7 @@ Amazons::Amazons(int n) : mImpl(new Impl) {
 }
 
 Amazons::~Amazons() {
-    free(mImpl->p);
+    delete [] mImpl->p;
     free(mImpl->board);
     delete mImpl;
 }
@@ -153,11 +150,7 @@ int Amazons::add_player(Player& p) {
         fprintf(stderr, "Game is locked.\n");
         return 0;
     }
-    if (mImpl->malloc_size <= mImpl->p_count) {
-        mImpl->p = (Player*) realloc(mImpl->p, sizeof(Player) * (mImpl->p_count + 1));
-        mImpl->malloc_size = mImpl->p_count + 1;
-    }
-    mImpl->p[mImpl->p_count] = p;
+    mImpl->p[mImpl->p_count] = &p;
     mImpl->p_count++;
     return mImpl->p_count;
 }
@@ -225,7 +218,7 @@ int Amazons::play_game() {
     while (p_with_move > 1) {
         player = move % mImpl->p_count;
         if (!mImpl->can_move(player)) {
-            fprintf(mImpl->p[player].get_out_stream(), "Player %i has no valid "
+            fprintf(mImpl->p[player]->get_out_stream(), "Player %i has no valid "
                             "move. Their turn will be skipped.\n", player+1);
             p_with_move--;
             has_move[player] = false;
@@ -237,32 +230,32 @@ int Amazons::play_game() {
                 has_move[player] = true;
                 p_with_move++;
             }
-            print_game(mImpl->p[player].get_out_stream());
-            char* s = mImpl->p[player].get_move();
+            print_game(mImpl->p[player]->get_out_stream());
+            char* s = mImpl->p[player]->get_move();
             char* tok = strtok(s, " (),");
             if(tok == NULL || !sscanf(tok, "%i", &r_to)) {
                 fprintf(stderr, "Invalid input format.\n");
-                print_instructions(mImpl->p[player].get_out_stream());
+                print_instructions(mImpl->p[player]->get_out_stream());
             }
             tok = strtok(NULL, " (),");
             if(tok == NULL || !sscanf(tok, "%i", &c_to)) {
                 fprintf(stderr, "Invalid input format.\n");
-                print_instructions(mImpl->p[player].get_out_stream());
+                print_instructions(mImpl->p[player]->get_out_stream());
             }
             tok = strtok(NULL, " (),");
             if(tok == NULL || !sscanf(tok, "%i", &r_arrow)) {
                 fprintf(stderr, "Invalid input format.\n");
-                print_instructions(mImpl->p[player].get_out_stream());
+                print_instructions(mImpl->p[player]->get_out_stream());
             }
             tok = strtok(NULL, " (),");
             if(tok == NULL || !sscanf(tok, "%i", &c_arrow)) {
                 fprintf(stderr, "Invalid input format.\n");
-                print_instructions(mImpl->p[player].get_out_stream());
+                print_instructions(mImpl->p[player]->get_out_stream());
             }
             free(s);
             if (!mImpl->make_move(player, r_to, c_to, r_arrow, c_arrow)) {
                 fprintf(stderr, "Try again, must be a valid move.\n");
-                print_instructions(mImpl->p[player].get_out_stream());
+                print_instructions(mImpl->p[player]->get_out_stream());
             }
             else {
                 move++;
