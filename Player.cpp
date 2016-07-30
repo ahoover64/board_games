@@ -17,7 +17,12 @@ Player::Player(FILE* input, FILE* output) : mImpl(new Impl()) {
     mImpl->output = output;
 }
 
-Player::~Player() { 
+Player::Player(const Player& p) : mImpl(new Impl()) {
+    mImpl->input = p.mImpl->input;
+    mImpl->output = p.mImpl->output;
+}
+
+Player::~Player() {
     delete mImpl;
 }
 
