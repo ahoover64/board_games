@@ -218,6 +218,7 @@ public:
                                             best_move % board_size,
                                             best_shot / board_size,
                                             best_shot % board_size);
+        //printf("%s\n", move);
         return move;
     }
 };

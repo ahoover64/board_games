@@ -26,8 +26,8 @@ public:
         int startc = (loc_c - 1 < 0) ? loc_c : loc_c-1;
         int endr   = (loc_r + 1 > board_size) ? loc_r : loc_r+1;
         int endc   = (loc_c + 1 > board_size) ? loc_c : loc_c+1;
-        for (int r = startr; r < endr; r++) {
-            for(int c = startc; c < endc; c++) {
+        for (int r = startr; r <= endr; r++) {
+            for(int c = startc; c <= endc; c++) {
                 if (board[board_size * r + c] == 0)
                     return true;
             }
@@ -217,6 +217,7 @@ int Amazons::play_game() {
     int r_to, c_to, r_arrow, c_arrow;
     while (p_with_move > 1) {
         player = move % mImpl->p_count;
+        print_game(mImpl->p[player]->get_out_stream());
         if (!mImpl->can_move(player)) {
             fprintf(mImpl->p[player]->get_out_stream(), "Player %i has no valid "
                             "move. Their turn will be skipped.\n", player+1);
@@ -230,7 +231,6 @@ int Amazons::play_game() {
                 has_move[player] = true;
                 p_with_move++;
             }
-            print_game(mImpl->p[player]->get_out_stream());
             char* s = mImpl->p[player]->get_move();
             char* tok = strtok(s, " (),");
             if(tok == NULL || !sscanf(tok, "%i", &r_to)) {
@@ -256,6 +256,7 @@ int Amazons::play_game() {
             if (!mImpl->make_move(player, r_to, c_to, r_arrow, c_arrow)) {
                 fprintf(stderr, "Try again, must be a valid move.\n");
                 print_instructions(mImpl->p[player]->get_out_stream());
+                exit(0);
             }
             else {
                 move++;
