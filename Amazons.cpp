@@ -72,8 +72,10 @@ public:
         int max_r = MAX(loc_r, r_to);
         int max_c = MAX(loc_c, c_to);
         while((r <= max_r) && (c <= max_c)) {
-            if (board[board_size * r + c] != 0 && r != loc_r && c != loc_c) {
-                printf("ERROR 3: (%i, %i)\n", r, c);
+            if (board[board_size * r + c] != 0 &&
+                (r != loc_r || c != loc_c)) {
+                printf("ERROR 3: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
+                printf("Blocking: (%d, %d)\n", r, c);
                 return false;
             }
             r++; c++;
@@ -90,8 +92,11 @@ public:
         max_r = MAX(r_arrow, r_to);
         max_c = MAX(c_arrow, c_to);
         while((r <= max_r) && (c <= max_c)) {
-            if (board[board_size * r + c] != 0 && r != r_to && c != c_to) {
-                printf("ERROR 4: (%i, %i)\n", r, c);
+            if (board[board_size * r + c] != 0 &&
+                board[board_size * r + c] != (player+1) &&
+                (r != r_to || c != c_to)) {
+                printf("ERROR 4: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
+                printf("Blocking: (%d, %d)\n", r, c);
                 return false;
             }
             r++; c++;

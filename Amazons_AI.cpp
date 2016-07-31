@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <cmath>
+#include <climits>
 #include <string.h>
 
 class AmazonsAI::Impl {
@@ -59,21 +60,24 @@ public:
                 loc = i;
                 break;
             }
-            move_board[i] = 0;
-            shoot_board[i] = 0;
+            move_board[i] = INT_MIN;
         }
         if (loc == -1) {
             fprintf(stderr, "player number was invalid\n");
         }
+        move_board[loc] = INT_MIN;
 
         // Iterate along the row
         int row = loc / board_size;
         int col = 0;
         int pos = -1;
-        move_board[loc] = -100; // arbitrary low value so that it doesn't try to stay in the same place
         for (col = 0; col < board_size; col++) {
             pos = row * board_size + col;
             if (pos == loc) continue;
+            else if (board[pos] != 0) {
+                move_board[pos] = INT_MIN;
+                continue;
+            }
             move_board[pos] = move_weights[0] * can_move(pos) +
                               move_weights[1] * num_blocked(pos) +
                               move_weights[2] * std::abs(pos - loc) +
@@ -86,6 +90,10 @@ public:
         for (row = 0; row < board_size; row++) {
             pos = row * board_size + col;
             if (pos == loc) continue;
+            else if (board[pos] != 0) {
+                move_board[pos] = INT_MIN;
+                continue;
+            }
             move_board[pos] = move_weights[0] * can_move(pos) +
                               move_weights[1] * num_blocked(pos) +
                               move_weights[2] * std::abs(pos - loc) / board_size +
@@ -101,18 +109,22 @@ public:
         int c;
         for (i = std::abs(row - col), c = 0; i < board_size; i++, c++) {
             if (row > col) {
-                pos = board_size * c + i;
-            }
-            else {
                 pos = board_size * i + c;
             }
+            else {
+                pos = board_size * c + i;
+            }
             if (pos == loc) continue;
+            else if (board[pos] != 0) {
+                move_board[pos] = INT_MIN;
+                continue;
+            }
             move_board[pos] = move_weights[0] * can_move(pos) +
                               move_weights[1] * num_blocked(pos) +
                               move_weights[2] * std::abs(pos - loc) / board_size +
                               move_weights[3] * (board_size - (std::abs(pos - loc) / board_size));
         }
-        }
+        } // extra braces are to limit the scope of the variables i and c
 
         // Iterate on off diagonal
         pos = -1;
@@ -124,6 +136,10 @@ public:
         }
         for (; pos > 0 && (pos / board_size != pos + (board_size - 1)); pos = pos - (board_size - 1)) {
             if (pos == loc) continue;
+            else if (board[pos] != 0) {
+                move_board[pos] = INT_MIN;
+                continue;
+            }
             move_board[pos] = move_weights[0] * can_move(pos) +
                               move_weights[1] * num_blocked(pos) +
                               move_weights[2] * std::abs(pos - loc) / board_size +
@@ -136,15 +152,20 @@ public:
         int loc = 0;
         for (int i = 0; i < board_size  * board_size; i++) {
             loc = (move_board[i] > move_board[loc]) ? i : loc;
+            shoot_board[i] = INT_MIN;
         }
+        shoot_board[loc] = INT_MIN; // arbitrary low value so that it doesn't try to stay in the same place
 
         int row = loc / board_size;
         int col = 0;
         int pos = -1;
-        shoot_board[loc] = -100; // arbitrary low value so that it doesn't try to stay in the same place
         for (col = 0; col < board_size; col++) {
             pos = row * board_size + col;
             if (pos == loc) continue;
+            else if (board[pos] != 0 && board[pos] != num) {
+                shoot_board[pos] = INT_MIN;
+                continue;
+            }
             shoot_board[pos] = shoot_weights[0] * can_move(pos) +
                                shoot_weights[1] * num_blocked(pos) +
                                shoot_weights[2] * std::abs(pos - loc) +
@@ -157,6 +178,10 @@ public:
         for (row = 0; row < board_size; row++) {
             pos = row * board_size + col;
             if (pos == loc) continue;
+            else if (board[pos] != 0 && board[pos] != num) {
+                shoot_board[pos] = INT_MIN;
+                continue;
+            }
             shoot_board[pos] = shoot_weights[0] * can_move(pos) +
                                shoot_weights[1] * num_blocked(pos) +
                                shoot_weights[2] * std::abs(pos - loc) / board_size +
@@ -178,6 +203,10 @@ public:
                 pos = board_size * i + c;
             }
             if (pos == loc) continue;
+            else if (board[pos] != 0 && board[pos] != num) {
+                shoot_board[pos] = INT_MIN;
+                continue;
+            }
             shoot_board[pos] = shoot_weights[0] * can_move(pos) +
                                shoot_weights[1] * num_blocked(pos) +
                                shoot_weights[2] * std::abs(pos - loc) / board_size +
@@ -195,6 +224,10 @@ public:
         }
         for (; pos > 0 && (pos / board_size != pos + (board_size - 1)); pos = pos - (board_size - 1)) {
             if (pos == loc) continue;
+            else if (board[pos] != 0 && board[pos] != num) {
+                shoot_board[pos] = INT_MIN;
+                continue;
+            }
             shoot_board[pos] = shoot_weights[0] * can_move(pos) +
                                shoot_weights[1] * num_blocked(pos) +
                                shoot_weights[2] * std::abs(pos - loc) / board_size +
