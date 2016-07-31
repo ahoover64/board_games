@@ -24,8 +24,8 @@ public:
         }
         int startr = (loc_r - 1 < 0) ? loc_r : loc_r-1;
         int startc = (loc_c - 1 < 0) ? loc_c : loc_c-1;
-        int endr   = (loc_r + 1 > board_size) ? loc_r : loc_r+1;
-        int endc   = (loc_c + 1 > board_size) ? loc_c : loc_c+1;
+        int endr   = (loc_r + 1 >= board_size) ? loc_r : loc_r+1;
+        int endc   = (loc_c + 1 >= board_size) ? loc_c : loc_c+1;
         for (int r = startr; r <= endr; r++) {
             for(int c = startc; c <= endc; c++) {
                 if (board[board_size * r + c] == 0)
@@ -66,44 +66,46 @@ public:
             return false;
         }
 
+
         // Check that the movement path is clear
-        int r = MIN(loc_r, r_to);
-        int c = MIN(loc_c, c_to);
-        int max_r = MAX(loc_r, r_to);
-        int max_c = MAX(loc_c, c_to);
-        while((r <= max_r) && (c <= max_c)) {
-            if (board[board_size * r + c] != 0 &&
-                (r != loc_r || c != loc_c)) {
+        int r = loc_r;
+        int c = loc_c;
+        int end_r = r_to;
+        int end_c = c_to;
+        while (r != end_r || c != end_c) {
+            if (loc_r > r_to) r--;
+            else if (loc_r < r_to) r++;
+
+            if (loc_c > c_to) c--;
+            else if (loc_c < c_to) c++;
+
+            if (board[board_size * r + c] != 0) {
                 printf("ERROR 3: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
                 printf("Blocking: (%d, %d)\n", r, c);
                 return false;
             }
-            r++; c++;
-            if (loc_r == r_to)
-                r--;
-            if (loc_c == c_to)
-                c--;
+
         }
 
-
         // Check that the the player has a clear shot
-        r = MIN(r_arrow, r_to);
-        c = MIN(c_arrow, c_to);
-        max_r = MAX(r_arrow, r_to);
-        max_c = MAX(c_arrow, c_to);
-        while((r <= max_r) && (c <= max_c)) {
+        r = r_to;
+        c = c_to;
+        end_r = r_arrow;
+        end_c = c_arrow;
+        while (r != end_r || c != end_c) {
+            if (r_to > r_arrow) r--;
+            else if (r_to < r_arrow) r++;
+
+            if (c_to > c_arrow) c--;
+            else if (c_to < c_arrow) c++;
+
             if (board[board_size * r + c] != 0 &&
-                board[board_size * r + c] != (player+1) &&
-                (r != r_to || c != c_to)) {
+                board[board_size * r + c] != (player+1)) {
                 printf("ERROR 4: (%d, %d), (%d, %d)\n", r_to, c_to, r_arrow, c_arrow);
                 printf("Blocking: (%d, %d)\n", r, c);
                 return false;
             }
-            r++; c++;
-            if (r_arrow == r_to)
-                r--;
-            if (c_arrow == c_to)
-                c--;
+
         }
 
         board[board_size * loc_r + loc_c] = 0;        // A free space
@@ -162,7 +164,8 @@ int Amazons::add_player(Player& p) {
 
 void Amazons::print_instructions(FILE* stream) {
     if(!stream) {
-        fprintf(stderr, "Stream can't be null\n");
+        return;
+        //fprintf(stderr, "Stream can't be null\n");
     }
     fprintf(stream, "Input moves in the form: (r, c), (r, c) where the first \n"
                     "ordered pair is your move and the second your arrow.\n");
@@ -170,7 +173,8 @@ void Amazons::print_instructions(FILE* stream) {
 
 void Amazons::print_game(FILE* stream) {
     if(!stream) {
-        fprintf(stderr, "Stream can't be null");
+        return;
+        //fprintf(stderr, "Stream can't be null\n");
     }
     fprintf(stream, "  ");
     for(int i = 0; i < 4 * mImpl->board_size + 1; i++)
@@ -200,7 +204,13 @@ void Amazons::print_game(FILE* stream) {
 
 int Amazons::play_game() {
     int row, col;
+
+    // Reset the board in case mutliple games are played
+    for (int i = 0; i < mImpl->board_size * mImpl->board_size; i++) {
+        mImpl->board[i] = 0;
+    }
     // Randomize player positions initially
+    srand(time(NULL));
     for (int p = 0; p < mImpl->p_count; p++) {
         row = rand() % mImpl->board_size;
         col = rand() % mImpl->board_size;
@@ -224,12 +234,13 @@ int Amazons::play_game() {
         player = move % mImpl->p_count;
         print_game(mImpl->p[player]->get_out_stream());
         if (!mImpl->can_move(player)) {
-            fprintf(mImpl->p[player]->get_out_stream(), "Player %i has no valid "
+            if ((mImpl->p[player]->get_out_stream()) != NULL) {
+                fprintf(mImpl->p[player]->get_out_stream(), "Player %i has no valid "
                             "move. Their turn will be skipped.\n", player+1);
+            }
             p_with_move--;
             has_move[player] = false;
             move++;
-            break;
         }
         else {
             if (!has_move[player]) {
@@ -261,7 +272,6 @@ int Amazons::play_game() {
             if (!mImpl->make_move(player, r_to, c_to, r_arrow, c_arrow)) {
                 fprintf(stderr, "Try again, must be a valid move.\n");
                 print_instructions(mImpl->p[player]->get_out_stream());
-                exit(0);
             }
             else {
                 move++;
@@ -273,7 +283,10 @@ int Amazons::play_game() {
     while(!mImpl->can_move(winner))  {
         winner++;
     }
-    winner++;
+    if (mImpl->p_count == 2) {
+        winner = move % 2;
+    }
+    winner++; // Adjust from index to count
     unlock_game();
     return winner;
 }

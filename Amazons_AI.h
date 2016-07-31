@@ -18,6 +18,8 @@ public:
     //AmazonsAI(const AmazonsAI&);
     //AmazonsAI& operator=(const AmazonsAI&);
     ~AmazonsAI();
+
+    // Weight methods return shallow copies that can be modified to change the AI
     double* move_weights();
     double* shoot_weights();
     FILE* get_out_stream();
