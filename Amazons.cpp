@@ -210,7 +210,6 @@ int Amazons::play_game() {
         mImpl->board[i] = 0;
     }
     // Randomize player positions initially
-    srand(time(NULL));
     for (int p = 0; p < mImpl->p_count; p++) {
         row = rand() % mImpl->board_size;
         col = rand() % mImpl->board_size;
