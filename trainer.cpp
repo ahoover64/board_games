@@ -9,8 +9,10 @@
 #include "Amazons_AI.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int main(int argc, char* argv[]) {
+    srand(time(NULL));
     Amazons g = Amazons();
     AmazonsAI p1(1, 5, g.get_board());
     AmazonsAI p2(2, 5, g.get_board());
@@ -19,7 +21,7 @@ int main(int argc, char* argv[]) {
     int w = 0;
 
     int count = 0;
-    int num_games = 1000;
+    int num_games = 100;
     int p1_games = 0;
     int p2_games = 0;
     double* p1_move = p1.move_weights();
@@ -33,9 +35,9 @@ int main(int argc, char* argv[]) {
             // change the loser weights to see if they can beat the winner next time
             for (int i = 0; i < 4; i++) {
                 p2_move[i] = (p2_move[i] + p1_move[i]) / 2
-                                - (0.5 + ((double) rand() / RAND_MAX)) * (num_games - count) / 50;
+                                - (-0.5 + (((double) rand() / RAND_MAX))) * (num_games - count) / num_games;
                 p2_shoot[i] = (p2_shoot[i] + p1_shoot[i]) / 2
-                                - (0.5 + ((double) rand() / RAND_MAX)) * (num_games - count) / 50;
+                                - (-0.5 + (((double) rand() / RAND_MAX))) * (num_games - count) / num_games;
             }
         }
         if (w == 2) {
@@ -43,9 +45,9 @@ int main(int argc, char* argv[]) {
             // change the loser weights to see if they can beat the winner next time
             for (int i = 0; i < 4; i++) {
                 p1_move[i] = (p2_move[i] + p1_move[i]) / 2
-                                - (0.5 + ((double) rand() / RAND_MAX)) * (num_games - count) / 50;
+                                - (-0.5 + (((double) rand() / RAND_MAX))) * (num_games - count) / num_games;
                 p1_shoot[i] = (p2_shoot[i] + p1_shoot[i]) / 2
-                                - (0.5 + ((double) rand() / RAND_MAX)) * (num_games - count) / 50;
+                                - (-0.5 + (((double) rand() / RAND_MAX))) * (num_games - count) / num_games;
             }
         }
         count++;

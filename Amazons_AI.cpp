@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <cmath>
+#include <cstdlib>
 #include <climits>
 #include <string.h>
 
@@ -276,7 +277,6 @@ AmazonsAI::AmazonsAI(int p_num, int size, const int* game_board) : Player(), aIm
     aImpl->num = p_num;
     aImpl->board_size = size;
     aImpl->board = game_board;
-    srand(time(NULL));
     aImpl->move_board = (double*) malloc(sizeof(double) * size * size);
     aImpl->shoot_board = (double*) malloc(sizeof(double) * size * size);
     for (int i = 0; i < 4; i++) {
